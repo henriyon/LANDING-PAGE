@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratório de Lançamento Oblíquo</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="min-h-screen flex flex-col items-center p-4 sm:p-6 lg:p-8">
+
+    <header class="text-center mb-8">
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800">Laboratório Interativo de Lançamento Oblíquo</h1>
+        <p class="mt-2 text-lg text-gray-600">Explore a física por trás dos projéteis de forma visual e interativa.</p>
+    </header>
+
+    <main class="w-full max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <div class="lg:col-span-1 flex flex-col gap-6">
+                <div id="controls" class="control-panel p-6">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-700">Parâmetros de Lançamento</h2>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <label for="initialVelocity" class="block text-sm font-medium text-gray-700">Velocidade Inicial (v₀)</label>
+                            <div class="flex items-center space-x-4 mt-2">
+                                <input type="range" id="initialVelocity" min="10" max="100" value="50" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                <span id="initialVelocityValue" class="font-semibold text-indigo-600 w-16 text-center">50 m/s</span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="launchAngle" class="block text-sm font-medium text-gray-700">Ângulo de Lançamento (θ)</label>
+                            <div class="flex items-center space-x-4 mt-2">
+                                <input type="range" id="launchAngle" min="1" max="89" value="45" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                <span id="launchAngleValue" class="font-semibold text-indigo-600 w-16 text-center">45°</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="gravity" class="block text-sm font-medium text-gray-700">Aceleração da Gravidade (g)</label>
+                            <div class="flex items-center space-x-4 mt-2">
+                                <input type="number" id="gravity" min="1" max="30" value="9.8" step="0.1" class="w-full p-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
+                                <span class="font-semibold text-gray-600">m/s²</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="launchButton" class="w-full mt-8 py-3 px-4 text-white font-bold rounded-lg launch-button">
+                        Lançar Projétil
+                    </button>
+                </div>
+
+                <div id="results" class="control-panel p-6">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-700">Resultados da Simulação</h2>
+                    <div class="space-y-3">
+                        <div class="result-card p-3 flex justify-between items-center">
+                            <span class="font-medium">Alcance Máximo:</span>
+                            <span id="rangeValue" class="font-bold text-lg text-indigo-700">0.00 m</span>
+                        </div>
+                        <div class="result-card p-3 flex justify-between items-center">
+                            <span class="font-medium">Altura Máxima:</span>
+                            <span id="heightValue" class="font-bold text-lg text-indigo-700">0.00 m</span>
+                        </div>
+                        <div class="result-card p-3 flex justify-between items-center">
+                            <span class="font-medium">Tempo de Voo:</span>
+                            <span id="timeValue" class="font-bold text-lg text-indigo-700">0.00 s</span>
+                        </div>
+                        <div class="result-card p-3 flex justify-between items-center">
+                            <span class="font-medium">Velocidade Horizontal (Vₓ):</span>
+                            <span id="vxValue" class="font-bold text-lg text-indigo-700">0.00 m/s</span>
+                        </div>
+                         <div class="result-card p-3 flex justify-between items-center">
+                            <span class="font-medium">Velocidade Vertical Inicial (V₀ᵧ):</span>
+                            <span id="vyValue" class="font-bold text-lg text-indigo-700">0.00 m/s</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2 control-panel p-4 sm:p-6 flex flex-col items-center justify-center">
+                <p class="text-center text-gray-600 mb-4">Nesta simulação, você pode ajustar os parâmetros de lançamento para ver como eles afetam a trajetória de um projétil. Observe o gráfico para visualizar o caminho percorrido e confira os resultados calculados para entender a relação entre ângulo, velocidade e as distâncias alcançadas.</p>
+                <div class="chart-container w-full h-[300px] sm:h-[400px] md:h-[500px] max-h-[60vh] relative">
+                    <canvas id="trajectoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="formulas" class="mt-8 control-panel p-6 w-full">
+            <details>
+                <summary class="text-2xl font-bold text-gray-700 cursor-pointer">As Fórmulas por Trás da Mágica</summary>
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-gray-600">
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2">Decomposição da Velocidade</h3>
+                        <p>Vₓ = v₀ * cos(θ)</p>
+                        <p>V₀ᵧ = v₀ * sin(θ)</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2">Altura Máxima (H)</h3>
+                        <p>H = (V₀ᵧ²) / (2 * g)</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2">Alcance Máximo (A)</h3>
+                        <p>A = (v₀² * sin(2*θ)) / g</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2">Tempo de Subida (tₛ)</h3>
+                        <p>tₛ = V₀ᵧ / g</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2">Tempo Total de Voo (T)</h3>
+                        <p>T = 2 * tₛ</p>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <h3 class="font-semibold text-lg mb-2">Equação da Trajetória</h3>
+                        <p>y(x) = x*tan(θ) - (g*x²) / (2*v₀²*cos²(θ))</p>
+                    </div>
+                </div>
+            </details>
+        </div>
+    </main>
+    
+    <footer class="w-full text-center text-gray-500 text-sm mt-8 py-4">
+        <p>Feito por Henrique - 2025</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

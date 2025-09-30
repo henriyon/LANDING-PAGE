@@ -1,0 +1,71 @@
+/* :root define variáveis globais de CSS */
+:root {
+    --primary-color: #4F46E5;
+    --primary-gradient: linear-gradient(135deg, #4F46E5, #7C3AED);
+    --background-color: #FDFBF8;
+    --text-color: #4A4A4A;
+    --panel-background: #FFFFFF;
+    --border-color: #EAEAEA;
+    --result-card-bg: #F8F9FA;
+    --result-card-border: #E0E0E0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.control-panel {
+    background-color: var(--panel-background);
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+}
+
+.result-card {
+    background-color: var(--result-card-bg);
+    border-radius: 0.5rem;
+    border: 1px solid var(--result-card-border);
+}
+
+.launch-button {
+    background: var(--primary-gradient);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.launch-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.1);
+}
+
+.launch-button:disabled {
+    background: #D1D5DB;
+    cursor: not-allowed;
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* Estilização para o controle deslizante (range input) */
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--primary-color);
+    cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: var(--primary-color);
+    cursor: pointer;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
